@@ -4,17 +4,17 @@ import MealCard from "@/components/MealCard";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-background to-background/90">
       <Header />
       <main className="container mx-auto px-4 pt-24 pb-16 animate-fade-in">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <span className="text-sm text-gray-500">Aujourd'hui</span>
-              <h2 className="text-2xl font-bold text-gray-800">Journal alimentaire</h2>
+              <span className="text-sm text-muted-foreground">Aujourd'hui</span>
+              <h2 className="text-2xl font-bold">Journal alimentaire</h2>
             </div>
             <div className="text-right">
-              <span className="text-sm text-gray-500">Total</span>
+              <span className="text-sm text-muted-foreground">Total</span>
               <p className="text-xl font-semibold text-primary">1200 cal</p>
             </div>
           </div>
