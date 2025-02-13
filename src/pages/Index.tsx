@@ -1,50 +1,83 @@
 
-import Header from "@/components/Header";
-import MealCard from "@/components/MealCard";
+import React from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
+import MealCard from '@/components/MealCard';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-background/90">
-      <Header />
-      <main className="container mx-auto px-4 pt-24 pb-16 animate-fade-in">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <span className="text-sm text-muted-foreground">Aujourd'hui</span>
-              <h2 className="text-2xl font-bold">Journal alimentaire</h2>
-            </div>
-            <div className="text-right">
-              <span className="text-sm text-muted-foreground">Total</span>
-              <p className="text-xl font-semibold text-primary">1200 cal</p>
-            </div>
-          </div>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <View>
+            <Text variant="bodySmall" style={styles.dateText}>Aujourd'hui</Text>
+            <Text variant="headlineMedium" style={styles.title}>Journal alimentaire</Text>
+          </View>
+          <View>
+            <Text variant="bodySmall" style={styles.totalLabel}>Total</Text>
+            <Text variant="titleLarge" style={styles.totalCalories}>1200 cal</Text>
+          </View>
+        </View>
 
-          <div className="space-y-6">
-            <MealCard
-              title="Petit-déjeuner"
-              calories={300}
-              time="07:00 - 09:00"
-            />
-            <MealCard
-              title="Déjeuner"
-              calories={500}
-              time="12:00 - 14:00"
-            />
-            <MealCard
-              title="Dîner"
-              calories={400}
-              time="19:00 - 21:00"
-            />
-            <MealCard
-              title="Collations"
-              calories={0}
-              time="Toute la journée"
-            />
-          </div>
-        </div>
-      </main>
-    </div>
+        <View style={styles.mealsContainer}>
+          <MealCard
+            title="Petit-déjeuner"
+            calories={300}
+            time="07:00 - 09:00"
+          />
+          <MealCard
+            title="Déjeuner"
+            calories={500}
+            time="12:00 - 14:00"
+          />
+          <MealCard
+            title="Dîner"
+            calories={400}
+            time="19:00 - 21:00"
+          />
+          <MealCard
+            title="Collations"
+            calories={0}
+            time="Toute la journée"
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollContent: {
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 24,
+    marginTop: 60, // Pour éviter le notch sur iOS
+  },
+  dateText: {
+    color: '#666',
+  },
+  title: {
+    fontWeight: 'bold',
+  },
+  totalLabel: {
+    color: '#666',
+    textAlign: 'right',
+  },
+  totalCalories: {
+    fontWeight: 'bold',
+    color: '#10b981',
+  },
+  mealsContainer: {
+    gap: 16,
+  },
+});
 
 export default Index;
