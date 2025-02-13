@@ -1,10 +1,8 @@
 
-import { Plus } from "lucide-react";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
-import { useState } from "react";
-import { AddFoodDialog } from "./AddFoodDialog";
-import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from "./ui/table";
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Surface, Text, DataTable, IconButton } from 'react-native-paper';
+import { AddFoodDialog } from './AddFoodDialog';
 
 interface MealCardProps {
   title: string;
@@ -20,7 +18,7 @@ interface FoodItem {
   fats: number;
 }
 
-const MealCard = ({ title, calories: initialCalories, time }: MealCardProps) => {
+const MealCard = ({ title, time }: MealCardProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [foods, setFoods] = useState<FoodItem[]>([]);
 
@@ -40,60 +38,51 @@ const MealCard = ({ title, calories: initialCalories, time }: MealCardProps) => 
 
   return (
     <>
-      <Card className="p-4 mb-4 bg-card/80 backdrop-blur-sm border-border/50 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <span className="text-xs text-muted-foreground">{time}</span>
-            <h3 className="text-lg font-semibold">{title}</h3>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-primary/10"
-            onClick={() => setIsDialogOpen(true)}
-          >
-            <Plus className="h-5 w-5 text-primary" />
-          </Button>
-        </div>
+      <Surface style={styles.card}>
+        <View style={styles.header}>
+          <View>
+            <Text variant="bodySmall" style={styles.time}>{time}</Text>
+            <Text variant="titleMedium" style={styles.title}>{title}</Text>
+          </View>
+          <IconButton
+            icon="plus"
+            size={24}
+            onPress={() => setIsDialogOpen(true)}
+          />
+        </View>
 
         {foods.length > 0 ? (
-          <div className="mt-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Aliment</TableHead>
-                  <TableHead className="text-right">Calories</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Prot.</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Gluc.</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Lip.</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {foods.map((food, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{food.name}</TableCell>
-                    <TableCell className="text-right">{food.calories} kcal</TableCell>
-                    <TableCell className="text-right hidden sm:table-cell">{food.proteins}g</TableCell>
-                    <TableCell className="text-right hidden sm:table-cell">{food.carbs}g</TableCell>
-                    <TableCell className="text-right hidden sm:table-cell">{food.fats}g</TableCell>
-                  </TableRow>
-                ))}
-                <TableRow className="border-t-2">
-                  <TableCell className="font-medium">Total</TableCell>
-                  <TableCell className="text-right font-medium">{totals.calories} kcal</TableCell>
-                  <TableCell className="text-right font-medium hidden sm:table-cell">{totals.proteins}g</TableCell>
-                  <TableCell className="text-right font-medium hidden sm:table-cell">{totals.carbs}g</TableCell>
-                  <TableCell className="text-right font-medium hidden sm:table-cell">{totals.fats}g</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable style={styles.table}>
+            <DataTable.Header>
+              <DataTable.Title>Aliment</DataTable.Title>
+              <DataTable.Title numeric>Calories</DataTable.Title>
+              <DataTable.Title numeric>Prot.</DataTable.Title>
+              <DataTable.Title numeric>Gluc.</DataTable.Title>
+              <DataTable.Title numeric>Lip.</DataTable.Title>
+            </DataTable.Header>
+
+            {foods.map((food, index) => (
+              <DataTable.Row key={index}>
+                <DataTable.Cell>{food.name}</DataTable.Cell>
+                <DataTable.Cell numeric>{food.calories} kcal</DataTable.Cell>
+                <DataTable.Cell numeric>{food.proteins}g</DataTable.Cell>
+                <DataTable.Cell numeric>{food.carbs}g</DataTable.Cell>
+                <DataTable.Cell numeric>{food.fats}g</DataTable.Cell>
+              </DataTable.Row>
+            ))}
+
+            <DataTable.Row style={styles.totalRow}>
+              <DataTable.Cell>Total</DataTable.Cell>
+              <DataTable.Cell numeric>{totals.calories} kcal</DataTable.Cell>
+              <DataTable.Cell numeric>{totals.proteins}g</DataTable.Cell>
+              <DataTable.Cell numeric>{totals.carbs}g</DataTable.Cell>
+              <DataTable.Cell numeric>{totals.fats}g</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
         ) : (
-          <div className="mt-2">
-            <span className="text-sm text-muted-foreground">Aucun aliment ajouté</span>
-          </div>
+          <Text style={styles.emptyText}>Aucun aliment ajouté</Text>
         )}
-      </Card>
+      </Surface>
 
       <AddFoodDialog
         isOpen={isDialogOpen}
@@ -103,5 +92,37 @@ const MealCard = ({ title, calories: initialCalories, time }: MealCardProps) => 
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 8,
+    elevation: 2,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  time: {
+    color: '#666',
+  },
+  title: {
+    fontWeight: 'bold',
+  },
+  table: {
+    marginTop: 16,
+  },
+  totalRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  emptyText: {
+    color: '#666',
+    marginTop: 8,
+  },
+});
 
 export default MealCard;

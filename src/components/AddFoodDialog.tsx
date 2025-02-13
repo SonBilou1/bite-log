@@ -1,11 +1,7 @@
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
-import { useForm } from "react-hook-form";
-import { Plus } from "lucide-react";
+import React, { useState } from 'react';
+import { View, Modal, TextInput, StyleSheet } from 'react-native';
+import { Button, Text, Surface } from 'react-native-paper';
 
 interface AddFoodDialogProps {
   isOpen: boolean;
@@ -23,136 +19,165 @@ interface FoodItem {
 
 export const AddFoodDialog = ({ isOpen, onClose, onAddFood }: AddFoodDialogProps) => {
   const [isCreatingNew, setIsCreatingNew] = useState(false);
-  const form = useForm<FoodItem>({
-    defaultValues: {
-      name: "",
+  const [food, setFood] = useState<FoodItem>({
+    name: '',
+    calories: 0,
+    proteins: 0,
+    carbs: 0,
+    fats: 0,
+  });
+
+  const handleSubmit = () => {
+    onAddFood(food);
+    setFood({
+      name: '',
       calories: 0,
       proteins: 0,
       carbs: 0,
       fats: 0,
-    },
-  });
-
-  const onSubmit = (data: FoodItem) => {
-    onAddFood(data);
-    form.reset();
+    });
     setIsCreatingNew(false);
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>
+    <Modal
+      visible={isOpen}
+      onDismiss={onClose}
+      transparent
+      animationType="slide"
+    >
+      <View style={styles.modalContainer}>
+        <Surface style={styles.modalContent}>
+          <Text variant="headlineSmall" style={styles.title}>
             {isCreatingNew ? "Créer un nouvel aliment" : "Ajouter un aliment"}
-          </DialogTitle>
-        </DialogHeader>
+          </Text>
 
-        {!isCreatingNew ? (
-          <div className="space-y-4">
-            <div className="relative">
-              <Input
+          {!isCreatingNew ? (
+            <View style={styles.searchContainer}>
+              <TextInput
                 placeholder="Rechercher un aliment..."
-                className="pr-10"
+                style={styles.input}
               />
-            </div>
-            <div className="space-y-2">
-              {/* Liste des aliments - à implémenter avec la base de données */}
-              <p className="text-sm text-muted-foreground text-center py-4">
-                Aucun aliment trouvé
-              </p>
-            </div>
-            <Button
-              onClick={() => setIsCreatingNew(true)}
-              className="w-full"
-              variant="outline"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Créer un nouvel aliment
-            </Button>
-          </div>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nom de l'aliment</FormLabel>
-                    <FormControl>
-                      <Input placeholder="ex: Pomme" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
+              <Text style={styles.noResults}>Aucun aliment trouvé</Text>
+              <Button
+                mode="outlined"
+                onPress={() => setIsCreatingNew(true)}
+                style={styles.button}
+              >
+                Créer un nouvel aliment
+              </Button>
+            </View>
+          ) : (
+            <View style={styles.form}>
+              <TextInput
+                placeholder="Nom de l'aliment"
+                value={food.name}
+                onChangeText={(text) => setFood({ ...food, name: text })}
+                style={styles.input}
               />
-              <FormField
-                control={form.control}
-                name="calories"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Calories (kcal)</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                    </FormControl>
-                  </FormItem>
-                )}
+              <TextInput
+                placeholder="Calories (kcal)"
+                value={food.calories.toString()}
+                onChangeText={(text) => setFood({ ...food, calories: Number(text) || 0 })}
+                keyboardType="numeric"
+                style={styles.input}
               />
-              <div className="grid grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="proteins"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Protéines (g)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                      </FormControl>
-                    </FormItem>
-                  )}
+              <View style={styles.macrosContainer}>
+                <TextInput
+                  placeholder="Protéines (g)"
+                  value={food.proteins.toString()}
+                  onChangeText={(text) => setFood({ ...food, proteins: Number(text) || 0 })}
+                  keyboardType="numeric"
+                  style={[styles.input, styles.macroInput]}
                 />
-                <FormField
-                  control={form.control}
-                  name="carbs"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Glucides (g)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                      </FormControl>
-                    </FormItem>
-                  )}
+                <TextInput
+                  placeholder="Glucides (g)"
+                  value={food.carbs.toString()}
+                  onChangeText={(text) => setFood({ ...food, carbs: Number(text) || 0 })}
+                  keyboardType="numeric"
+                  style={[styles.input, styles.macroInput]}
                 />
-                <FormField
-                  control={form.control}
-                  name="fats"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Lipides (g)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                      </FormControl>
-                    </FormItem>
-                  )}
+                <TextInput
+                  placeholder="Lipides (g)"
+                  value={food.fats.toString()}
+                  onChangeText={(text) => setFood({ ...food, fats: Number(text) || 0 })}
+                  keyboardType="numeric"
+                  style={[styles.input, styles.macroInput]}
                 />
-              </div>
-              <div className="flex justify-end space-x-2 pt-4">
+              </View>
+              <View style={styles.buttonContainer}>
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreatingNew(false)}
+                  mode="outlined"
+                  onPress={() => setIsCreatingNew(false)}
+                  style={styles.button}
                 >
                   Retour
                 </Button>
-                <Button type="submit">
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit}
+                  style={styles.button}
+                >
                   Ajouter
                 </Button>
-              </div>
-            </form>
-          </Form>
-        )}
-      </DialogContent>
-    </Dialog>
+              </View>
+            </View>
+          )}
+        </Surface>
+      </View>
+    </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
+  },
+  modalContent: {
+    width: '100%',
+    padding: 20,
+    borderRadius: 10,
+  },
+  title: {
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  searchContainer: {
+    gap: 10,
+  },
+  form: {
+    gap: 15,
+  },
+  input: {
+    backgroundColor: '#f5f5f5',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  macrosContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  macroInput: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 10,
+  },
+  button: {
+    marginVertical: 5,
+  },
+  noResults: {
+    textAlign: 'center',
+    color: '#666',
+    marginVertical: 20,
+  },
+});
