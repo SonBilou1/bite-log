@@ -1,65 +1,93 @@
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = () => {
     // Pour l'instant, on simule une connexion réussie
-    navigate("/");
+    navigation.navigate('Index');
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-lg border border-border/50 shadow-lg">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">BiteLog</h1>
-          <p className="mt-2 text-muted-foreground">Connectez-vous à votre compte</p>
-        </div>
-        <form onSubmit={handleLogin} className="mt-8 space-y-6">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-foreground">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="mt-1"
-                placeholder="vous@exemple.com"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-foreground">
-                Mot de passe
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="mt-1"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-          <Button type="submit" className="w-full">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text variant="headlineLarge" style={styles.title}>BiteLog</Text>
+          <Text variant="bodyLarge" style={styles.subtitle}>
+            Connectez-vous à votre compte
+          </Text>
+        </View>
+
+        <View style={styles.form}>
+          <TextInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            mode="outlined"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            style={styles.input}
+          />
+          <TextInput
+            label="Mot de passe"
+            value={password}
+            onChangeText={setPassword}
+            mode="outlined"
+            secureTextEntry
+            style={styles.input}
+          />
+          <Button
+            mode="contained"
+            onPress={handleLogin}
+            style={styles.button}
+          >
             Se connecter
           </Button>
-        </form>
-      </div>
-    </div>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  title: {
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: '#666',
+  },
+  form: {
+    gap: 16,
+  },
+  input: {
+    backgroundColor: '#fff',
+  },
+  button: {
+    marginTop: 8,
+  },
+});
 
 export default Login;
